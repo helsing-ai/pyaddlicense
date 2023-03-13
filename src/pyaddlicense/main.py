@@ -344,6 +344,8 @@ _INDICATOR_STRINGS = [
     "mozilla public",
     "spdx-license-identifier",
     "do not edit",
+    "do not modify",
+    "was automatically generated",
     "code generated",
     "lockfile",
 ]
