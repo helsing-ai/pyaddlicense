@@ -1,0 +1,34 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pyaddlicense"
+version = "0.1.0"
+description = ""
+authors = ["Mikey Coward <pyaddlicense@kixa.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pathspec = "^0.11.0"
+rich = "^13.3.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+flake8 = "*"
+isort = "*"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+
+[tool.poetry.scripts]
+pyaddlicense = "pyaddlicense.main:main"
+
+[tool.black]
+line-length = 120 
+
+[tool.isort]
+combine_as_imports = true
+line_length = 120
+profile = "black"
