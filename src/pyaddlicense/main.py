@@ -27,7 +27,7 @@ from typing import Iterable, List, NoReturn
 import pathspec
 from rich.console import Console
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 
