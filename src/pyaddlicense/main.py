@@ -22,7 +22,7 @@ import textwrap
 from datetime import datetime, timezone
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Iterable, List, NoReturn
+from typing import Iterable, List, NoReturn, Optional
 
 import pathspec
 from rich.console import Console
@@ -184,7 +184,7 @@ def get_args_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def macro_license(license: str, holder: str, year: int | None = None) -> str:
+def macro_license(license: str, holder: str, year: Optional[int] = None) -> str:
     """Returns license with the following macros filled:
     - {{ .YEAR }}: Replaced with the current year.
     - {{ .HOLDER }}: Replaced with the holder of the copyright.
@@ -205,7 +205,7 @@ class BothLicenseOptionsGivenError(Exception):
     pass
 
 
-def get_license_template(license: str | None, license_file: TextIOWrapper | None) -> str:
+def get_license_template(license: Optional[str], license_file: Optional[TextIOWrapper]) -> str:
     """Returns the configured license template as a str. This can be one of:
     - license (given via the CLI flag -l)
     - The contents of the file at license_file (given via the CLI flag -f)
@@ -312,31 +312,53 @@ def comment_license_header(license: str, start: str, mid: str, end: str) -> str:
     return full_license
 
 
-def create_license_header(path: Path, templated_license: str) -> None | str:
+def create_license_header(path: Path, templated_license: str) -> Optional[str]:
     """Checks the given path suffix to convert the given templated_license into a block-comment in various languages.
     It returns None if the Path suffix does not match a known language and processing will be skipped.
     """
-    match path.suffix:
-        case ".c" | ".h" | ".gv" | ".java" | ".scala" | ".kt" | ".kts":
-            return comment_license_header(templated_license, "/*", " * ", " */")
-        case ".js" | ".mjs" | ".cjs" | ".jsx" | ".tsx" | ".css" | ".scss" | ".sass" | ".ts":
-            return comment_license_header(templated_license, "/**", " * ", " */")
-        case ".cc" | ".cpp" | ".cs" | ".go" | ".hcl" | ".hh" | ".hpp" | ".m" | ".mm" | ".proto" | ".rs" | ".swift" | ".dart" | ".groovy" | ".v" | ".sv":
-            return comment_license_header(templated_license, "", "// ", "")
-        case ".py" | ".sh" | ".yaml" | ".yml" | ".dockerfile" | "dockerfile" | ".rb" | "gemfile" | ".tcl" | ".tf" | ".bzl" | ".pl" | ".pp" | "build" | ".php":
-            return comment_license_header(templated_license, "", "# ", "")
-        case ".el" | ".lisp":
-            return comment_license_header(templated_license, "", ";; ", "")
-        case ".erl":
-            return comment_license_header(templated_license, "", "% ", "")
-        case ".hs" | ".sql" | ".sdl":
-            return comment_license_header(templated_license, "", "-- ", "")
-        case ".html" | ".xml" | ".vue" | ".wxi" | ".wxl" | ".wxs":
-            return comment_license_header(templated_license, "<!--", " ", "-->")
-        case ".ml" | ".mli" | ".mll" | ".mly":
-            return comment_license_header(templated_license, "(**", "   ", "*)")
-        case _:
-            return None
+    if path.suffix in set([".c", ".h", ".gv", ".java", ".scala", ".kt", ".kts"]):
+        return comment_license_header(templated_license, "/*", " * ", " */")
+    elif path.suffix in set([".js", ".mjs", ".cjs", ".jsx", ".tsx", ".css", ".scss", ".sass", ".ts"]):
+        return comment_license_header(templated_license, "/**", " * ", " */")
+    elif path.suffix in set([".cc", ".cpp", ".cs", ".go", ".hcl", ".hh", ".hpp", ".m", ".mm", ".proto", ".rs", ".swift", ".dart", ".groovy", ".v", ".sv"]):
+        return comment_license_header(templated_license, "", "// ", "")
+    elif path.suffix in set([".py", ".sh", ".yaml", ".yml", ".dockerfile", "dockerfile", ".rb", "gemfile", ".tcl", ".tf", ".bzl", ".pl", ".pp", "build", ".php"]):
+        return comment_license_header(templated_license, "", "# ", "")
+    elif path.suffix in set([".el", ".lisp"]):
+        return comment_license_header(templated_license, "", ";; ", "")
+    elif path.suffix in set([".erl"]):
+        return comment_license_header(templated_license, "", "% ", "")
+    elif path.suffix in set([".hs", ".sql", ".sdl"]):
+        return comment_license_header(templated_license, "", "-- ", "")
+    elif path.suffix in set([".html", ".xml", ".vue", ".wxi", ".wxl", ".wxs"]):
+        return comment_license_header(templated_license, "<!--", " ", "-->")
+    elif path.suffix in set([".ml", ".mli", ".mll", ".mly"]):
+        return comment_license_header(templated_license, "(**", "   ", "*)")
+    else:
+        return None
+
+    # ...Left for if we can ever use python >=3.10
+    # match path.suffix:
+    #     case ".c" | ".h" | ".gv" | ".java" | ".scala" | ".kt" | ".kts":
+    #         return comment_license_header(templated_license, "/*", " * ", " */")
+    #     case ".js" | ".mjs" | ".cjs" | ".jsx" | ".tsx" | ".css" | ".scss" | ".sass" | ".ts":
+    #         return comment_license_header(templated_license, "/**", " * ", " */")
+    #     case ".cc" | ".cpp" | ".cs" | ".go" | ".hcl" | ".hh" | ".hpp" | ".m" | ".mm" | ".proto" | ".rs" | ".swift" | ".dart" | ".groovy" | ".v" | ".sv":
+    #         return comment_license_header(templated_license, "", "// ", "")
+    #     case ".py" | ".sh" | ".yaml" | ".yml" | ".dockerfile" | "dockerfile" | ".rb" | "gemfile" | ".tcl" | ".tf" | ".bzl" | ".pl" | ".pp" | "build" | ".php":
+    #         return comment_license_header(templated_license, "", "# ", "")
+    #     case ".el" | ".lisp":
+    #         return comment_license_header(templated_license, "", ";; ", "")
+    #     case ".erl":
+    #         return comment_license_header(templated_license, "", "% ", "")
+    #     case ".hs" | ".sql" | ".sdl":
+    #         return comment_license_header(templated_license, "", "-- ", "")
+    #     case ".html" | ".xml" | ".vue" | ".wxi" | ".wxl" | ".wxs":
+    #         return comment_license_header(templated_license, "<!--", " ", "-->")
+    #     case ".ml" | ".mli" | ".mll" | ".mly":
+    #         return comment_license_header(templated_license, "(**", "   ", "*)")
+    #     case _:
+    #         return None
 
 
 _INDICATOR_STRINGS = [
