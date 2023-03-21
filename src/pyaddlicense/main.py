@@ -27,6 +27,8 @@ from typing import Iterable, List, NoReturn, Optional
 import pathspec
 from rich.console import Console
 
+from pyaddlicense import __version__
+
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
@@ -117,6 +119,15 @@ def get_args_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "--version",
+        "-v",
+        help="version: print the current version and exit",
+        default=False,
+        required=False,
+        action=argparse.BooleanOptionalAction,
+    )
+
+    parser.add_argument(
         "--check",
         "-c",
         help="check only: verify any copyright header exists on all files and exit with non-zero code if any are missing",
@@ -164,8 +175,8 @@ def get_args_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--holder",
         "-o",
-        help="holder/owner: the license holder. This is a required flag. For example: -h 'John Smith' or -h 'Example Company LLC'",
-        required=True,
+        help="holder/owner: the license holder. For example: -o 'John Smith' or -o 'Example Company LLC'",
+        required=False,
     )
 
     parser.add_argument(
@@ -222,6 +233,11 @@ def get_license_template(license: Optional[str], license_file: Optional[TextIOWr
         return _DEFAULT_LICENSE
 
 
+def get_holder(args: argparse.Namespace) -> Optional[str]:
+    # TODO(mc): Potentially check other sources, like git author or an envvar for holder info.
+    return args.holder
+
+
 def convert_namespace_to_global_settings(args: argparse.Namespace, cwd: Path) -> GlobalSettings:
     """Converts the parsed argument namespace into a set of GlobalSettings. It will macro the license that it finds."""
     try:
@@ -232,7 +248,15 @@ def convert_namespace_to_global_settings(args: argparse.Namespace, cwd: Path) ->
         )
         sys.exit(1)
 
-    macrod_license = macro_license(template_license, args.holder)
+    holder = get_holder(args)
+
+    if holder == "" or holder is None:
+        console.print(
+            f"[{_COLOR_RED}]ERROR: No holder found. Please pass the license holder via the -o flag.[/{_COLOR_RED}]"
+        )
+        sys.exit(1)
+
+    macrod_license = macro_license(template_license, holder)
 
     if not macrod_license.endswith("\n"):
         macrod_license += "\n"
@@ -320,9 +344,46 @@ def create_license_header(path: Path, templated_license: str) -> Optional[str]:
         return comment_license_header(templated_license, "/*", " * ", " */")
     elif path.suffix in set([".js", ".mjs", ".cjs", ".jsx", ".tsx", ".css", ".scss", ".sass", ".ts"]):
         return comment_license_header(templated_license, "/**", " * ", " */")
-    elif path.suffix in set([".cc", ".cpp", ".cs", ".go", ".hcl", ".hh", ".hpp", ".m", ".mm", ".proto", ".rs", ".swift", ".dart", ".groovy", ".v", ".sv"]):
+    elif path.suffix in set(
+        [
+            ".cc",
+            ".cpp",
+            ".cs",
+            ".go",
+            ".hcl",
+            ".hh",
+            ".hpp",
+            ".m",
+            ".mm",
+            ".proto",
+            ".rs",
+            ".swift",
+            ".dart",
+            ".groovy",
+            ".v",
+            ".sv",
+        ]
+    ):
         return comment_license_header(templated_license, "", "// ", "")
-    elif path.suffix in set([".py", ".sh", ".yaml", ".yml", ".dockerfile", "dockerfile", ".rb", "gemfile", ".tcl", ".tf", ".bzl", ".pl", ".pp", "build", ".php"]):
+    elif path.suffix in set(
+        [
+            ".py",
+            ".sh",
+            ".yaml",
+            ".yml",
+            ".dockerfile",
+            "dockerfile",
+            ".rb",
+            "gemfile",
+            ".tcl",
+            ".tf",
+            ".bzl",
+            ".pl",
+            ".pp",
+            "build",
+            ".php",
+        ]
+    ):
         return comment_license_header(templated_license, "", "# ", "")
     elif path.suffix in set([".el", ".lisp"]):
         return comment_license_header(templated_license, "", ";; ", "")
@@ -518,6 +579,10 @@ def main() -> NoReturn:
 
     parser = get_args_parser()
     args = parser.parse_args(sys.argv[1:])
+
+    if args.version:
+        print(__version__)
+        sys.exit(0)
 
     global_settings = convert_namespace_to_global_settings(args, root_path)
 
