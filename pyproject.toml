@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pyaddlicense"
-version = "0.2.2"
+version = "0.3.0"
 description = ""
 authors = ["Mikey Coward <pyaddlicense@kixa.me>"]
 readme = "README.md"
