@@ -77,7 +77,7 @@ pyaddlicense -o 'Example Company' -c -s
 Clone this repo:
 
 ```
-git clone https://github.com/kixa/pyaddlicense
+git clone git@github.com:helsing-ai/pyaddlicense.git
 ```
 
 Install our dependencies:
