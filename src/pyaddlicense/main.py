@@ -22,7 +22,7 @@ import textwrap
 from datetime import datetime, timezone
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Iterable, List, NoReturn, Optional
+from typing import Iterable, List, NoReturn, Optional, cast
 
 import pathspec
 from rich.console import Console
@@ -233,7 +233,7 @@ def get_license_template(license: Optional[str], license_file: Optional[TextIOWr
 
 def get_holder(args: argparse.Namespace) -> Optional[str]:
     # TODO(mc): Potentially check other sources, like git author or an envvar for holder info.
-    return args.holder
+    return cast(Optional[str], args.holder)
 
 
 def convert_namespace_to_global_settings(args: argparse.Namespace, cwd: Path) -> GlobalSettings:
@@ -611,15 +611,16 @@ def main() -> NoReturn:
 
     initial_ignore = IgnoreHelper(relative_to=root_path, spec=ignore_spec)
 
-    to_process: Iterable[Path] = []
+    to_process: List[Path] = []
 
     if len(args.src) <= 0:
         to_process += [root_path]
     else:
         to_process = [Path(p).resolve() for p in args.src]
 
-    def process_fn():
-        [process(path, global_settings, [initial_ignore]) for path in to_process]
+    def process_fn() -> None:
+        for path in to_process:
+            process(path, global_settings, [initial_ignore])
 
     if global_settings.silent:
         process_fn()
