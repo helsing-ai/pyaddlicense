@@ -1,6 +1,6 @@
-"""pyaddlicense adds license headers to the begining of source files.
+"""pyaddlicense adds license headers to the beginning of source files.
 
-pyaddlicense will add a license to the top of any file given as an arguement, if
+pyaddlicense will add a license to the top of any file given as an argument, if
 they are found to be missing one. If a folder is given, pyaddlicense will
 recursively move through the entire sub-directory structure, adding a license
 to the top of every file missing one. It will respect .gitignore by default.
