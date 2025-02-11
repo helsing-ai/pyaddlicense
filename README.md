@@ -99,4 +99,5 @@ Lint any changes with:
 ```
 uv run ruff check --fix .
 uv run ruff format .
+uv run mypy src tests
 ```
