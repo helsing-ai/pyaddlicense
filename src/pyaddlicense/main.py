@@ -112,9 +112,7 @@ def get_args_parser() -> argparse.ArgumentParser:
             A python version of addlicense. Adds copyright lines to files that don't have them.
 
             If neither of -l or -f are set, the default license used is: {}
-            """.format(
-                _DEFAULT_LICENSE
-            )
+            """.format(_DEFAULT_LICENSE)
         ),
     )
 
@@ -611,10 +609,7 @@ def main() -> NoReturn:
     ignore_spec = pathspec.GitIgnoreSpec.from_lines(_DEFAULT_IGNORE)
     ignore_spec += pathspec.GitIgnoreSpec.from_lines(args.ignore)
 
-    initial_ignore = IgnoreHelper(
-        relative_to=root_path,
-        spec=ignore_spec,
-    )
+    initial_ignore = IgnoreHelper(relative_to=root_path, spec=ignore_spec)
 
     to_process: Iterable[Path] = []
 

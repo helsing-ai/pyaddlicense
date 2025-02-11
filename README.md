@@ -43,7 +43,7 @@ pyaddlicense -o 'Example Company' -c
 You can additional files or folders to ignore with the `-i` (or `--ignore`) flag:
 
 ```
-pyaddlicense -o 'Example Company' -i .flake8 -i pyproject.toml
+pyaddlicense -o 'Example Company' -i pyproject.toml
 ```
 
 NOTE: This will be _additional_ to `.gitignore`, if you want to disable `.gitignore` checking and completely manage the ignore rules yourself, also set `--ignore-gitignore=0`.
@@ -97,5 +97,6 @@ uv run pytest tests
 
 Lint any changes with:
 ```
-uv run black src/ tests/ && uv run flake8 src/ tests/ && uv run isort src/ tests/
+uv run ruff check --fix .
+uv run ruff format .
 ```
