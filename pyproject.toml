@@ -1,32 +1,33 @@
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "pyaddlicense"
 version = "0.3.0"
-description = ""
-authors = ["Mikey Coward <pyaddlicense@kixa.me>"]
+description = "Add a license to any source file that does not have one."
+authors = [{ name = "Mikey Coward", email = "pyaddlicense@kixa.me" }]
+requires-python = "~=3.7"
 readme = "README.md"
+dependencies = ["pathspec>=0.9.0", "rich>=12.0.0"]
 
-[tool.poetry.dependencies]
-python = "^3.7"
-pathspec = ">=0.9.0"
-rich = ">=12.0.0"
+[project.urls]
+Homepage = "https://github.com/helsing-ai/pyaddlicense"
+Repository = "https://github.com/helsing-ai/pyaddlicense"
+Issues = "https://github.com/helsing-ai/pyaddlicense/issues"
 
-[tool.poetry.group.dev.dependencies]
-black = "*"
-flake8 = "*"
-isort = "*"
-
-[tool.poetry.group.test.dependencies]
-pytest = "*"
-
-[tool.poetry.scripts]
+[project.scripts]
 pyaddlicense = "pyaddlicense.main:main"
 
+[dependency-groups]
+dev = ["black", "flake8", "isort"]
+test = ["pytest"]
+
+[tool.uv]
+default-groups = ["dev", "test"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.black]
-line-length = 120 
+line-length = 120
 
 [tool.isort]
 combine_as_imports = true
