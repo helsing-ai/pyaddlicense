@@ -11,14 +11,9 @@ pyaddlicense -o 'Example Company'
 
 ## Installation
 
-We recommend installing `pyaddlicense` globally via `pipx` so that it remains in an isolated environment:
+We recommend installing `pyaddlicense` globally via `uv` so that it remains in an isolated environment:
 ```
-pipx install pyaddlicense
-```
-
-However, `pip` should also work if you want to include it solely in your local venv:
-```
-pip install pyaddlicense
+uv tool install pyaddlicense
 ```
 
 ## Usage and flags
