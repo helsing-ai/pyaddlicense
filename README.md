@@ -11,14 +11,9 @@ pyaddlicense -o 'Example Company'
 
 ## Installation
 
-We recommend installing `pyaddlicense` globally via `pipx` so that it remains in an isolated environment:
+We recommend installing `pyaddlicense` globally via `uv` so that it remains in an isolated environment:
 ```
-pipx install pyaddlicense
-```
-
-However, `pip` should also work if you want to include it solely in your local venv:
-```
-pip install pyaddlicense
+uv tool install pyaddlicense
 ```
 
 ## Usage and flags
@@ -77,30 +72,30 @@ pyaddlicense -o 'Example Company' -c -s
 
 ## Development
 
-*NOTE:* Local development requires `poetry` to be installed.
+*NOTE:* Local development requires `uv` to be installed.
 
 Clone this repo:
 
 ```
-git clone https://github.com/kixa/pyaddlicense
+git clone git@github.com:helsing-ai/pyaddlicense.git
 ```
 
 Install our dependencies:
 
 ```
-poetry install
+uv sync
 ```
 
 ### Testing:
 
 Run the tests via:
 ```
-poetry run pytest
+uv run pytest tests
 ```
 
 ### Linting:
 
 Lint any changes with:
 ```
-poetry run black src/ tests/ && poetry run flake8 src/ tests/ && poetry run isort src/ tests/
+uv run black src/ tests/ && uv run flake8 src/ tests/ && uv run isort src/ tests/
 ```
