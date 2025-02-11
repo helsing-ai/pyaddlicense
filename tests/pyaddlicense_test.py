@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from src.pyaddlicense.main import (
+from pyaddlicense.main import (
     BothLicenseOptionsGivenError,
     GlobalSettings,
     add_license_to_file,
