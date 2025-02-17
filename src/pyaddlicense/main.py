@@ -19,10 +19,11 @@ import dataclasses
 import logging
 import sys
 import textwrap
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Iterable, List, NoReturn, Optional, cast
+from typing import NoReturn, Optional, cast
 
 import pathspec
 from rich.console import Console
@@ -347,60 +348,56 @@ def create_license_header(path: Path, templated_license: str) -> Optional[str]:
     """Checks the given path suffix to convert the given templated_license into a block-comment in various languages.
     It returns None if the Path suffix does not match a known language and processing will be skipped.
     """
-    if path.suffix in set([".c", ".h", ".gv", ".java", ".scala", ".kt", ".kts"]):
+    if path.suffix in {".c", ".h", ".gv", ".java", ".scala", ".kt", ".kts"}:
         return comment_license_header(templated_license, "/*", " * ", " */")
-    elif path.suffix in set([".js", ".mjs", ".cjs", ".jsx", ".tsx", ".css", ".scss", ".sass", ".ts"]):
+    elif path.suffix in {".js", ".mjs", ".cjs", ".jsx", ".tsx", ".css", ".scss", ".sass", ".ts"}:
         return comment_license_header(templated_license, "/**", " * ", " */")
-    elif path.suffix in set(
-        [
-            ".cc",
-            ".cpp",
-            ".cs",
-            ".go",
-            ".hcl",
-            ".hh",
-            ".hpp",
-            ".m",
-            ".mm",
-            ".proto",
-            ".rs",
-            ".swift",
-            ".dart",
-            ".groovy",
-            ".v",
-            ".sv",
-        ]
-    ):
+    elif path.suffix in {
+        ".cc",
+        ".cpp",
+        ".cs",
+        ".go",
+        ".hcl",
+        ".hh",
+        ".hpp",
+        ".m",
+        ".mm",
+        ".proto",
+        ".rs",
+        ".swift",
+        ".dart",
+        ".groovy",
+        ".v",
+        ".sv",
+    }:
         return comment_license_header(templated_license, "", "// ", "")
-    elif path.suffix in set(
-        [
-            ".py",
-            ".sh",
-            ".yaml",
-            ".yml",
-            ".dockerfile",
-            "dockerfile",
-            ".rb",
-            "gemfile",
-            ".tcl",
-            ".tf",
-            ".bzl",
-            ".pl",
-            ".pp",
-            "build",
-            ".php",
-        ]
-    ):
+    elif path.suffix in {
+        ".py",
+        ".sh",
+        ".yaml",
+        ".yml",
+        ".dockerfile",
+        "dockerfile",
+        ".rb",
+        "gemfile",
+        ".tcl",
+        ".tf",
+        ".bzl",
+        ".pl",
+        ".pp",
+        "build",
+        ".php",
+    }:
         return comment_license_header(templated_license, "", "# ", "")
-    elif path.suffix in set([".el", ".lisp"]):
+    elif path.suffix in {".el", ".lisp"}:
         return comment_license_header(templated_license, "", ";; ", "")
-    elif path.suffix in set([".erl"]):
+    elif path.suffix in {".erl"}:
         return comment_license_header(templated_license, "", "% ", "")
-    elif path.suffix in set([".hs", ".sql", ".sdl"]):
+    elif path.suffix in {".hs", ".sql", ".sdl"}:
         return comment_license_header(templated_license, "", "-- ", "")
-    elif path.suffix in set([".html", ".xml", ".vue", ".wxi", ".wxl", ".wxs"]):
+    elif path.suffix in {".html", ".xml", ".vue", ".wxi", ".wxl", ".wxs"}:
         return comment_license_header(templated_license, "<!--", " ", "-->")
-    elif path.suffix in set([".ml", ".mli", ".mll", ".mly"]):
+    elif path.suffix in {".ml", ".mli", ".mll", ".mly"}:
         return comment_license_header(templated_license, "(**", "   ", "*)")
     else:
         return None
@@ -486,7 +483,7 @@ _HASH_BANG_STARTS = [
 ]
 
 
-def get_updated_file_contents(file_lines: List[str], license: str) -> str:
+def get_updated_file_contents(file_lines: list[str], license: str) -> str:
     """Returns the full file represented by file_lines with license placed into the correct position (this is
     usually the top, but for shell scripts, XML and various other filetypes it could be further down).
     """
@@ -611,7 +608,7 @@ def main() -> NoReturn:
 
     initial_ignore = IgnoreHelper(relative_to=root_path, spec=ignore_spec)
 
-    to_process: List[Path] = []
+    to_process: list[Path] = []
 
     if len(args.src) <= 0:
         to_process += [root_path]

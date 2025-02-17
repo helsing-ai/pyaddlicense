@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    name: Run checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run formatter
+        run: uv run ruff format --check .
+
+      - name: Run linter
+        run: uv run ruff check .
+
+      - name: Run type checker
+        run: uv run mypy src tests
+
+      - name: Run tests
+        run: uv run pytest tests

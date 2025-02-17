@@ -3,7 +3,7 @@ name = "pyaddlicense"
 version = "0.3.0"
 description = "Add a license to any source file that does not have one."
 authors = [{ name = "Mikey Coward", email = "pyaddlicense@kixa.me" }]
-requires-python = "~=3.7"
+requires-python = "~=3.9"
 readme = "README.md"
 dependencies = ["pathspec>=0.9.0", "rich>=12.0.0"]
 
@@ -41,11 +41,15 @@ warn_unused_ignores = true
 testpaths = ["tests"]
 
 [tool.ruff]
+target-version = "py39"
 line-length = 120
 
 [tool.ruff.format]
 docstring-code-format = true
 skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
